@@ -22,7 +22,7 @@ function onFormSubmit(e) {
 
 function onFormInput(e) {
 
-    const formElements = e.target.elements;
+    const formElements = e.currentTarget.elements;
 
     const email = formElements.email.value;
     const message = formElements.message.value;
