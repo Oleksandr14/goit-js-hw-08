@@ -1,45 +1,46 @@
 import throttle from 'lodash.throttle';
 
-const ref = {
-    form: document.querySelector('.feedback-form'),
+const form = document.querySelector('.feedback-form');
+
+const STORAGE_KEY = "feedback-form-state";
+
+form.addEventListener('submit', onFormSubmit);
+form.addEventListener('input', throttle(onFormInput, 500));
+
+populateFormInput();
+
+function onFormSubmit(e) {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+
+    formData.forEach((value, name) => console.log(`${name} : ${value}`));
+
+    localStorage.removeItem(STORAGE_KEY);
+    e.currentTarget.reset();
 };
 
-const LOCAL_STORAGE_KEY = "feedback-form-state";
+function onFormInput(e) {
 
-addLocalStorageInputValue();
+    const formElements = e.target.elements;
 
-ref.form.addEventListener('input', throttle(onFormInput, 500));
-ref.form.addEventListener('submit', onFormSubmit);
+    const email = formElements.email.value;
+    const message = formElements.message.value;
 
-const formData = {
-    email: ref.form.email.value,
-    message: ref.form.message.value,    
+    const formData = {
+        email,
+        message,
     };
 
-function onFormInput(event) {
-    formData[event.target.name] = event.target.value;
-    const stringifiedData = JSON.stringify(formData);
-    localStorage.setItem(LOCAL_STORAGE_KEY, stringifiedData);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
 };
 
-function onFormSubmit(event) {
-    event.preventDefault();
+function populateFormInput() {
+    let savedMessage = JSON.parse(localStorage.getItem(STORAGE_KEY));
 
-    const dataSubmit = {
-        email: event.currentTarget.email.value,
-        message: event.currentTarget.message.value,
+    if (savedMessage) {
+        form.elements.email.value = savedMessage.email;
+        form.elements.message.value = savedMessage.message;
     };
-    console.log(dataSubmit);
 
-    localStorage.removeItem(LOCAL_STORAGE_KEY);
-    event.currentTarget.reset();
-};
-
-function addLocalStorageInputValue() {
-    let storageInputValue = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
-    
-    if (!storageInputValue) return;
-    
-    ref.form.elements.email.value = storageInputValue.email;        
-    ref.form.elements.message.value = storageInputValue.message;   
 };
