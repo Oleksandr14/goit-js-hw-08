@@ -9,6 +9,19 @@ form.addEventListener('input', throttle(onFormInput, 500));
 
 populateFormInput();
 
+function onFormInput(e) {
+
+    const email = form.email.value;
+    const message = form.message.value;
+
+    const formData = {
+        email,
+        message,
+    };
+    console.log(formData)
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+};
+
 function onFormSubmit(e) {
     e.preventDefault();
 
@@ -18,21 +31,6 @@ function onFormSubmit(e) {
 
     localStorage.removeItem(STORAGE_KEY);
     e.currentTarget.reset();
-};
-
-function onFormInput(e) {
-
-    const formElements = e.currentTarget.elements;
-
-    const email = formElements.email.value;
-    const message = formElements.message.value;
-
-    const formData = {
-        email,
-        message,
-    };
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
 };
 
 function populateFormInput() {
